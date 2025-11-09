@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cüneyt Çakar - Modern Portfolio | Full Stack Developer">
+    <meta name="author" content="Cüneyt Çakar">
+    <title>Cüneyt Çakar | Portfolio</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="./css/design-tokens.css" as="style">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./css/design-tokens.css?v=1109">
+    <link rel="stylesheet" href="./css/reset.css?v=1109">
+    <link rel="stylesheet" href="./css/base.css?v=1109">
+    <link rel="stylesheet" href="./css/components.css?v=1109">
+    <link rel="stylesheet" href="./css/animations.css?v=1109">
+    <link rel="stylesheet" href="./css/responsive.css?v=1109">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
+    
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#1d1d1f">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" aria-label="Main navigation">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="#home" class="navbar-brand" aria-label="Home">
+                    <span class="brand-text">CÇ</span>
+                </a>
+                <ul class="navbar-nav" role="menubar">
+                    <li role="none"><a href="#about" class="nav-link" role="menuitem">About</a></li>
+                    <li role="none"><a href="#projects" class="nav-link" role="menuitem">Projects</a></li>
+                    <li role="none"><a href="#github" class="nav-link" role="menuitem">GitHub</a></li>
+                    <li role="none"><a href="#contact" class="nav-link" role="menuitem">Contact</a></li>
+                </ul>
+                <button class="navbar-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero" aria-labelledby="hero-title">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 id="hero-title" class="hero-title">
+                        <span class="title-line">Hello, I'm</span>
+                        <span class="title-line title-highlight">Cüneyt Çakar</span>
+                        <span class="title-line-small">@olmstedian</span>
+                    </h1>
+                    <p class="hero-subtitle">Electronic & Communications Engineer | Full Stack Developer</p>
+                    <p class="hero-description">
+                        I design cutting-edge signal intelligence systems and develop modern web applications.
+                        Bridging the gap between hardware engineering and software innovation.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="#projects" class="btn btn-primary">View Projects</a>
+                        <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="liquid-blob blob-1"></div>
+                    <div class="liquid-blob blob-2"></div>
+                    <div class="liquid-blob blob-3"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about" aria-labelledby="about-title">
+        <div class="container">
+            <h2 id="about-title" class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p class="about-description">
+                        I'm an Electronic & Communications Engineer with expertise in both hardware design and full stack development.
+                        I create comprehensive solutions from RF circuits to modern web applications.
+                    </p>
+                    <div class="skills-grid">
+                        <div class="skill-card">
+                            <h3>Electronics</h3>
+                            <p>RF Design, SIGINT, DSP, FPGA</p>
+                        </div>
+                        <div class="skill-card">
+                            <h3>Backend</h3>
+                            <p>Node.js, Python, C++, PostgreSQL</p>
+                        </div>
+                        <div class="skill-card">
+                            <h3>Frontend</h3>
+                            <p>React, TypeScript, Vue.js, WebGL</p>
+                        </div>
+                        <div class="skill-card">
+                            <h3>DevOps</h3>
+                            <p>AWS, Docker, Linux, CI/CD</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects" aria-labelledby="projects-title">
+        <div class="container">
+            <h2 id="projects-title" class="section-title">Featured Projects</h2>
+            <div class="projects-grid" id="projects-grid">
+                <!-- Projects will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- GitHub Section -->
+    <section id="github" class="github" aria-labelledby="github-title">
+        <div class="github-full-width">
+            <h2 id="github-title" class="section-title">GitHub Activity</h2>
+            <div class="github-content">
+                <div class="github-stats" id="github-stats">
+                    <!-- GitHub stats will be loaded dynamically -->
+                </div>
+                <div class="github-repos" id="github-repos">
+                    <!-- GitHub repositories will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact" aria-labelledby="contact-title">
+        <div class="container">
+            <h2 id="contact-title" class="section-title">Let's Connect</h2>
+            <div class="contact-content">
+                <p class="contact-description">
+                    I'm available for both hardware engineering projects and full stack development opportunities.
+                </p>
+                <div class="contact-links">
+                    <a href="mailto:ccakar@spexop.com" class="contact-link" aria-label="Send email">
+                        <span class="contact-icon">📧</span>
+                        <span>ccakar@spexop.com</span>
+                    </a>
+                    <a href="https://github.com/olmstedian" class="contact-link" aria-label="GitHub profile">
+                        <span class="contact-icon">🐙</span>
+                        <span>GitHub</span>
+                    </a>
+                    <a href="https://instagram.com/cuneytandcakar" class="contact-link" aria-label="Instagram profile" target="_blank" rel="noopener">
+                        <span class="contact-icon">📸</span>
+                        <span>Instagram</span>
+                    </a>
+                    <a href="https://olmstedian.bsky.social" class="contact-link" aria-label="Bluesky profile" target="_blank" rel="noopener">
+                        <span class="contact-icon">🦋</span>
+                        <span>Bluesky</span>
+                    </a>
+                    <a href="https://x.com/_olmstedian_" class="contact-link" aria-label="X (Twitter) profile" target="_blank" rel="noopener">
+                        <span class="contact-icon">🐦</span>
+                        <span>X (Twitter)</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Cüneyt Çakar. Built with modern web standards.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="./js/utils.js?v=1109"></script>
+    <script src="./js/animations.js?v=1109"></script>
+    <script src="./js/github-api.js?v=1109"></script>
+    <script src="./js/main.js?v=1109"></script>
+</body>
+</html>
