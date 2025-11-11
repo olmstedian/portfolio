@@ -567,7 +567,10 @@ window.addEventListener('error', (e) => {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      const registration = await navigator.serviceWorker.register('/sw.js');
+      const swPath = window.location.pathname.endsWith('/')
+        ? 'sw.js'
+        : `${window.location.pathname.split('/').slice(0, -1).join('/') || '.'}/sw.js`;
+      const registration = await navigator.serviceWorker.register(swPath);
       console.log('SW registered: ', registration);
     } catch (registrationError) {
       console.log('SW registration failed: ', registrationError);

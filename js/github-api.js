@@ -1,11 +1,192 @@
 // GitHub API Integration for Portfolio
 
+class GitHubAPIError extends Error {
+  constructor(message, metadata = {}) {
+    super(message);
+    this.name = 'GitHubAPIError';
+    Object.assign(this, metadata);
+  }
+}
+
 class GitHubAPI {
-  constructor(username = 'olmstedian') {
+  constructor(username = 'olmstedian', options = {}) {
+    const {
+      token = null,
+      cacheTimeout = 5 * 60 * 1000,
+      tokenStorageKey = 'portfolio.githubToken',
+      cacheStorageNamespace = 'portfolio.githubCache',
+      fallbackCacheWindow = 24 * 60 * 60 * 1000
+    } = options;
+
     this.username = username;
     this.baseURL = 'https://api.github.com';
     this.cache = new Map();
-    this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
+    this.cacheTimeout = cacheTimeout;
+    this.tokenStorageKey = tokenStorageKey;
+    this.token = token || this.resolveTokenFromEnvironment();
+    this.cacheStorageNamespace = cacheStorageNamespace;
+    this.fallbackCacheWindow = fallbackCacheWindow;
+  }
+
+  canUseLocalStorage() {
+    return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+  }
+
+  resolveTokenFromEnvironment() {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
+    const configToken = window?.githubApiConfig?.token || window?.GITHUB_API_TOKEN;
+    if (configToken) {
+      return configToken;
+    }
+
+    if (typeof document !== 'undefined') {
+      const metaToken = document.querySelector('meta[name="github-token"]');
+      if (metaToken?.content) {
+        return metaToken.content.trim();
+      }
+    }
+
+    if (this.canUseLocalStorage()) {
+      try {
+        const storedValue = window.localStorage.getItem(this.tokenStorageKey);
+        if (storedValue) {
+          try {
+            const parsed = JSON.parse(storedValue);
+            if (typeof parsed === 'string') {
+              return parsed;
+            }
+            if (parsed && typeof parsed === 'object' && parsed.token) {
+              return parsed.token;
+            }
+          } catch (parseError) {
+            return storedValue;
+          }
+        }
+      } catch (storageError) {
+        console.warn('GitHub API: failed to read stored token', storageError);
+      }
+    }
+
+    return null;
+  }
+
+  getToken() {
+    if (this.token) {
+      return this.token;
+    }
+    this.token = this.resolveTokenFromEnvironment();
+    return this.token;
+  }
+
+  setToken(token, { persist = true } = {}) {
+    const trimmedToken = typeof token === 'string' ? token.trim() : null;
+    this.token = trimmedToken || null;
+
+    if (persist && this.token && this.canUseLocalStorage()) {
+      try {
+        window.localStorage.setItem(this.tokenStorageKey, JSON.stringify(this.token));
+      } catch (error) {
+        console.warn('GitHub API: failed to persist token', error);
+      }
+    }
+
+    if (!this.token && this.canUseLocalStorage()) {
+      try {
+        window.localStorage.removeItem(this.tokenStorageKey);
+      } catch (error) {
+        console.warn('GitHub API: failed to clear stored token', error);
+      }
+    }
+
+    this.cache.clear();
+  }
+
+  clearToken() {
+    this.setToken(null);
+  }
+
+  getAuthHeaders() {
+    const headers = {};
+    const authToken = this.getToken();
+
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
+    }
+
+    return headers;
+  }
+
+  async parseErrorResponse(response) {
+    try {
+      return await response.clone().json();
+    } catch (jsonError) {
+      try {
+        const text = await response.clone().text();
+        if (text) {
+          return { message: text };
+        }
+      } catch (textError) {
+        console.warn('GitHub API: failed to parse error response', textError);
+      }
+    }
+    return null;
+  }
+
+  buildPersistentKey(identifier) {
+    return `${this.cacheStorageNamespace}::${identifier}`;
+  }
+
+  getPersistentCache(cacheKey, { allowExpired = false } = {}) {
+    const storageUtil = typeof Storage !== 'undefined' && Storage && typeof Storage.get === 'function'
+      ? Storage
+      : null;
+
+    if (!this.canUseLocalStorage() || !storageUtil) {
+      return null;
+    }
+
+    try {
+      const record = storageUtil.get(cacheKey);
+      if (!record || typeof record !== 'object') {
+        return null;
+      }
+
+      const age = Date.now() - record.timestamp;
+      if (!allowExpired && age > this.cacheTimeout) {
+        return null;
+      }
+
+      if (allowExpired && age > this.fallbackCacheWindow) {
+        return null;
+      }
+
+      return record;
+    } catch (error) {
+      console.warn('GitHub API: failed to read persistent cache', { cacheKey, error });
+      return null;
+    }
+  }
+
+  setPersistentCache(cacheKey, data) {
+    const storageUtil = typeof Storage !== 'undefined' && Storage && typeof Storage.set === 'function'
+      ? Storage
+      : null;
+
+    if (!this.canUseLocalStorage() || !storageUtil) {
+      return;
+    }
+
+    try {
+      storageUtil.set(cacheKey, {
+        data,
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      console.warn('GitHub API: failed to persist cache', { cacheKey, error });
+    }
   }
 
   /**
@@ -16,6 +197,7 @@ class GitHubAPI {
   async makeRequest(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`;
     const cacheKey = url;
+    const persistentKey = this.buildPersistentKey(cacheKey);
     
     // Check cache
     if (this.cache.has(cacheKey)) {
@@ -26,25 +208,83 @@ class GitHubAPI {
     }
 
     try {
+      const headers = {
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        ...this.getAuthHeaders(),
+        ...(options.headers || {})
+      };
+
       const response = await fetch(url, {
         ...options,
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-          ...options.headers
-        }
+        headers
       });
 
       if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+        const errorPayload = await this.parseErrorResponse(response);
+        const rateLimitRemainingHeader = response.headers.get('x-ratelimit-remaining');
+        const rateLimitResetHeader = response.headers.get('x-ratelimit-reset');
+        const rateLimitRemaining = typeof rateLimitRemainingHeader === 'string'
+          ? Number(rateLimitRemainingHeader)
+          : null;
+        const rateLimitReset = typeof rateLimitResetHeader === 'string'
+          ? Number(rateLimitResetHeader)
+          : null;
+        const isRateLimit = response.status === 403 &&
+          rateLimitRemainingHeader !== null &&
+          Number.isFinite(rateLimitRemaining) &&
+          rateLimitRemaining <= 0;
+
+        const fallbackRecord = this.getPersistentCache(persistentKey, {
+          allowExpired: isRateLimit
+        });
+
+        if (fallbackRecord) {
+          console.warn('GitHub API: using cached data due to API error', {
+            endpoint: url,
+            status: response.status,
+            reason: isRateLimit ? 'RATE_LIMIT' : 'HTTP_ERROR'
+          });
+          this.cache.set(cacheKey, {
+            data: fallbackRecord.data,
+            timestamp: fallbackRecord.timestamp
+          });
+          return fallbackRecord.data;
+        }
+
+        let errorMessage = errorPayload?.message || `GitHub API error: ${response.status} ${response.statusText}`;
+
+        if (isRateLimit) {
+          const resetDate = rateLimitReset ? new Date(rateLimitReset * 1000) : null;
+          const resetMessage = resetDate
+            ? ` Rate limit resets at ${resetDate.toLocaleTimeString()}.`
+            : '';
+          errorMessage = 'GitHub API rate limit exceeded. Please try again later or provide a personal access token.' + resetMessage;
+        }
+
+        throw new GitHubAPIError(errorMessage, {
+          status: response.status,
+          statusText: response.statusText,
+          endpoint: url,
+          payload: errorPayload,
+          rateLimitRemaining,
+          rateLimitReset,
+          code: isRateLimit
+            ? 'RATE_LIMIT'
+            : response.status === 401
+            ? 'UNAUTHORIZED'
+            : 'HTTP_ERROR'
+        });
       }
 
       const data = await response.json();
-      
+
       // Cache the response
       this.cache.set(cacheKey, {
         data,
         timestamp: Date.now()
       });
+      this.setPersistentCache(persistentKey, data);
 
       return data;
     } catch (error) {
@@ -394,21 +634,49 @@ class GitHubProfileRenderer {
   renderError(error) {
     if (!this.statsContainer) return;
 
+    const isRateLimit = error?.code === 'RATE_LIMIT' || /rate limit/i.test(error?.message || '');
+
     this.statsContainer.innerHTML = `
       <div class="error-container">
         <p class="error-message">Failed to load GitHub profile: ${error.message}</p>
-        <button class="btn btn-secondary" onclick="githubRenderer.renderProfile()">
-          Try Again
-        </button>
+        ${isRateLimit ? `
+          <p class="error-hint">
+            GitHub is temporarily limiting requests. Data may be unavailable for a short time.
+          </p>
+        ` : ''}
+        <div class="error-actions">
+          <button class="btn btn-secondary" data-action="retry-github">
+            Try Again
+          </button>
+          <a class="btn btn-secondary" href="https://github.com/${this.api.username}" target="_blank" rel="noopener">
+            View Profile
+          </a>
+        </div>
       </div>
     `;
     
     if (this.reposContainer) {
       this.reposContainer.innerHTML = `
         <div class="error-container">
-          <p class="error-message">Failed to load repositories</p>
+          <p class="error-message">Failed to load repositories${isRateLimit ? ': GitHub API rate limit reached.' : ''}</p>
+          <a class="btn btn-secondary" href="https://github.com/${this.api.username}?tab=repositories" target="_blank" rel="noopener">
+            Browse on GitHub
+          </a>
         </div>
       `;
+    }
+
+    this.bindErrorActions();
+  }
+
+  bindErrorActions() {
+    if (!this.statsContainer) return;
+
+    const retryButton = this.statsContainer.querySelector('[data-action="retry-github"]');
+    if (retryButton) {
+      retryButton.addEventListener('click', () => {
+        this.renderProfile();
+      });
     }
   }
 
@@ -520,6 +788,22 @@ document.addEventListener('DOMContentLoaded', () => {
   githubAPI = new GitHubAPI('olmstedian'); // Your GitHub username
   githubRenderer = new GitHubProfileRenderer(githubAPI, 'github-stats');
   
+  if (typeof window !== 'undefined') {
+    window.githubAuthManager = {
+      setToken(token, options) {
+        githubAPI?.setToken(token, options);
+        githubRenderer?.renderProfile();
+      },
+      clearToken() {
+        githubAPI?.clearToken();
+        githubRenderer?.renderProfile();
+      },
+      getToken() {
+        return githubAPI?.getToken() || null;
+      }
+    };
+  }
+
   // Load GitHub profile when the section comes into view
   const githubSection = document.getElementById('github');
   if (githubSection) {
@@ -538,5 +822,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { GitHubAPI, GitHubProfileRenderer };
+  module.exports = { GitHubAPI, GitHubProfileRenderer, GitHubAPIError };
 }
