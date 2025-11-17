@@ -72,12 +72,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <div className="relative h-48 md:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-muted to-muted/50 flex-shrink-0">
         {project.images && project.images.length > 0 ? (
           <Carousel className="h-full w-full">
-            {[project.image, ...project.images].map((img, index) => (
+            {project.images.map((img, index) => (
               <CarouselItem key={index} className="basis-full">
                 <img
                   src={img}
                   alt={`${displayTitle} - Screenshot ${index + 1}`}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
                   loading={index === 0 ? "eager" : "lazy"}
                 />
               </CarouselItem>
@@ -87,7 +87,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <img
             src={project.image}
             alt={displayTitle}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
         )}

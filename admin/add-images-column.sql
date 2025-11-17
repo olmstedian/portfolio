@@ -11,8 +11,6 @@ ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT '{}';
 -- For local development: /images/projects/
 UPDATE projects 
 SET images = ARRAY[
-  'https://olmstedian.github.io/portfolio/images/projects/spexop-builder.png', -- Spexop Builder interface
-  'https://olmstedian.github.io/portfolio/images/projects/spexop-docs.png',    -- Documentation
   'https://olmstedian.github.io/portfolio/images/projects/spexop-homepage.png' -- Homepage
 ]
 WHERE title = 'Spexop-UI';
