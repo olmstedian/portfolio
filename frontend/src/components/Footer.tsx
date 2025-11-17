@@ -35,7 +35,7 @@ export function Footer() {
               </p>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-2">
-              {techStack.map((tech, index) => {
+              {techStack.map((tech) => {
                 const Icon = tech.icon
                 return (
                   <Badge

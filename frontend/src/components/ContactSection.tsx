@@ -146,7 +146,7 @@ export function ContactSection() {
               {t.contact.socialMedia}
             </h3>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {contactLinks.map((link, index) => {
+              {contactLinks.map((link) => {
                 const Icon = link.icon
                 const isExternal = link.href.startsWith('http')
                 

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { GitHubProfile as GitHubProfileType, ContributionStats, formatNumber } from "@/lib/github-api"
+import { GitHubProfile as GitHubProfileType, ContributionStats } from "@/lib/github-api"
 import { LanguageChart } from "./LanguageChart"
 import { Github, ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"

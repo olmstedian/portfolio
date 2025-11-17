@@ -1,6 +1,7 @@
 import { Languages } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useLanguage, Language } from "@/lib/language-provider"
+import { useLanguage } from "@/lib/language-provider"
+import type { Language } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 
 const languages: { code: Language; label: string; nativeLabel: string }[] = [
