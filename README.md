@@ -298,9 +298,13 @@ MIT License - feel free to use this project as a template for your own portfolio
 
 ## 📞 Contact
 
-- **Website**: [olmstedian.dev](https://olmstedian.dev)
-- **Email**: <cuneyt@olmstedian.dev>
-- **GitHub**: [@olmstedian](https://github.com/olmstedian)
+- **Website**: [ccakar.com](https://spexop.com)
+- **Email**: ccakar [at] spexop [dot] com
+- **GitHub**: [@ccakar](https://github.com/olmstedian)
+
+## Acknowledgments
+
+This project is hosted on [GitHub Pages](https://pages.github.com/). Thanks to GitHub for providing free static site hosting through GitHub Pages.
 
 ---
 
