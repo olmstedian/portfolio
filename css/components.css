@@ -442,4 +442,98 @@
   outline-offset: 2px;
 }
 
+/* Project Badges Container */
+.project-badges {
+  position: absolute;
+  top: var(--spacing-6);
+  right: var(--spacing-6);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  align-items: flex-end;
+}
+
+@media (min-width: 768px) {
+  .project-badges {
+    top: var(--spacing-8);
+    right: var(--spacing-8);
+    gap: var(--spacing-4);
+  }
+}
+
+/* More Technologies Badge */
+.project-tech-more {
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+/* Project Actions */
+.project-actions {
+  display: flex;
+  gap: var(--spacing-4);
+  padding-top: var(--spacing-6);
+  margin-top: auto;
+}
+
+@media (min-width: 768px) {
+  .project-actions {
+    gap: var(--spacing-5);
+    padding-top: var(--spacing-8);
+  }
+}
+
+.btn-project {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-radius: var(--radius-xl);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-base);
+  transition: all var(--animation-duration-fast) var(--animation-timing-ease);
+  border: 1px solid transparent;
+  min-height: 48px;
+}
+
+@media (min-width: 768px) {
+  .btn-project {
+    padding: var(--spacing-5) var(--spacing-8);
+    font-size: var(--font-size-lg);
+    min-height: 52px;
+  }
+}
+
+.btn-project:hover {
+  transform: translateY(-2px);
+}
+
+.btn-github {
+  background: linear-gradient(135deg, #24292e, #1b1f23);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-github:hover {
+  box-shadow: 0 8px 20px rgba(36, 41, 46, 0.4);
+}
+
+.btn-demo {
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+  color: white;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-demo:hover {
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-icon {
+  font-size: var(--font-size-base);
+}
+
 /* Fallback Notice */

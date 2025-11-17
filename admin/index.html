@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio Admin - Manage Projects">
+    <title>Portfolio Admin</title>
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/design-tokens.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <h1 class="admin-title">Portfolio Admin</h1>
+                <div class="admin-actions">
+                    <button id="logout-btn" class="btn btn-secondary">Logout</button>
+                    <a href="../index.html" class="btn btn-secondary" target="_blank">View Portfolio</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Login Section -->
+        <div id="login-section" class="login-section">
+            <div class="login-card">
+                <h2>Admin Login</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <div id="login-error" class="error-message"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Admin Section -->
+        <div id="admin-section" class="admin-section hidden">
+            <!-- Projects List -->
+            <section class="admin-projects-section">
+                <div class="section-header">
+                    <h2>Projects</h2>
+                    <button id="add-project-btn" class="btn btn-primary">+ Add Project</button>
+                </div>
+
+                <div class="projects-list" id="projects-list">
+                    <div class="loading">Loading projects...</div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Project Modal -->
+        <div id="project-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title">Add Project</h2>
+                    <button class="modal-close" id="modal-close">&times;</button>
+                </div>
+                <form id="project-form">
+                    <input type="hidden" id="project-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="project-title">Title *</label>
+                            <input type="text" id="project-title" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="project-image">Image URL *</label>
+                            <input type="url" id="project-image" name="image" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project-description">Description *</label>
+                        <textarea id="project-description" name="description" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="project-github">GitHub URL</label>
+                            <input type="url" id="project-github" name="github">
+                        </div>
+                        <div class="form-group">
+                            <label for="project-demo">Demo URL</label>
+                            <input type="url" id="project-demo" name="demo">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project-technologies">Technologies (comma-separated) *</label>
+                        <input type="text" id="project-technologies" name="technologies" placeholder="React, TypeScript, Node.js" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project-roles">Roles (comma-separated)</label>
+                        <input type="text" id="project-roles" name="roles" placeholder="Full Stack Developer, UI Designer">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="project-classification">Classification</label>
+                            <input type="text" id="project-classification" name="classification" placeholder="Military/Intelligence">
+                        </div>
+                        <div class="form-group">
+                            <label for="project-status">Development Status</label>
+                            <input type="text" id="project-status" name="status" placeholder="Active Development">
+                        </div>
+                        <div class="form-group">
+                            <label for="project-timeline">Timeline</label>
+                            <input type="text" id="project-timeline" name="timeline" placeholder="Q2 2026">
+                        </div>
+                    </div>
+
+                    <div class="form-checkboxes">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="project-featured" name="featured">
+                            <span>Featured</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="project-confidential" name="confidential">
+                            <span>Confidential</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="project-macos-window" name="macosWindow">
+                            <span>macOS Window Style</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project-order">Display Order</label>
+                        <input type="number" id="project-order" name="order" min="0" value="0">
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="modal-cancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Project</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="delete-modal" class="modal hidden">
+            <div class="modal-content modal-small">
+                <div class="modal-header">
+                    <h2>Delete Project</h2>
+                    <button class="modal-close" id="delete-modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this project? This action cannot be undone.</p>
+                    <p class="delete-project-name"></p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="delete-cancel">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="delete-confirm">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/utils.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
+
