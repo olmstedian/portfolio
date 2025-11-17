@@ -77,7 +77,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
                 <img
                   src={img}
                   alt={`${displayTitle} - Screenshot ${index + 1}`}
-                  className="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
+                  className="h-full w-full object-contain object-center"
                   loading={index === 0 ? "eager" : "lazy"}
                 />
               </CarouselItem>
@@ -87,7 +87,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <img
             src={project.image}
             alt={displayTitle}
-            className="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-contain object-center"
             loading="lazy"
           />
         )}
