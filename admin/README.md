@@ -152,6 +152,33 @@ The easiest way to migrate all your existing projects:
 
 **Note:** The SQL script will insert all projects from `projects-data.js` with the correct structure. If you've already run `setup.sql`, you can run `migrate-projects.sql` directly.
 
+### Adding Multiple Images to Projects (Image Carousel)
+
+To support multiple images per project that display in a carousel:
+
+1. **Run the images column migration:**
+   - Go to [SQL Editor](https://supabase.com/dashboard/project/iraexyvraqmzqzglopph/sql)
+   - Copy the contents of `admin/add-images-column.sql`
+   - Paste and run it
+   - This will add an `images` TEXT[] column and update the Spexop-UI project with sample images
+
+2. **Update image URLs:**
+   - The migration includes placeholder URLs - replace them with your actual image URLs
+   - Images should be hosted (CDN, GitHub Pages assets, etc.)
+   - Update the Spexop-UI project or any other project:
+
+```sql
+UPDATE projects 
+SET images = ARRAY[
+  'https://your-cdn.com/image1.jpg',
+  'https://your-cdn.com/image2.jpg',
+  'https://your-cdn.com/image3.jpg'
+]
+WHERE title = 'Spexop-UI';
+```
+
+3. **The carousel will automatically appear** in the project card when an `images` array is present.
+
 ### Alternative: Manual SQL Import
 
 Or use the SQL Editor to bulk import manually:

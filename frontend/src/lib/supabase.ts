@@ -10,6 +10,7 @@ export interface Project {
   title: string
   description: string
   image: string
+  images?: string[] // Optional array of additional images for carousel
   technologies: string[]
   roles?: string[]
   github?: string | null

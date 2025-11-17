@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Carousel, CarouselItem } from "@/components/ui/carousel"
 import { Project } from "@/lib/supabase"
 import { Github, ExternalLink, Shield, Lock, Construction } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -67,14 +68,29 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </div>
       )}
 
-      {/* Image */}
+      {/* Image Gallery */}
       <div className="relative h-48 md:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-muted to-muted/50 flex-shrink-0">
-        <img
-          src={project.image}
-          alt={displayTitle}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
+        {project.images && project.images.length > 0 ? (
+          <Carousel className="h-full w-full">
+            {[project.image, ...project.images].map((img, index) => (
+              <CarouselItem key={index} className="basis-full">
+                <img
+                  src={img}
+                  alt={`${displayTitle} - Screenshot ${index + 1}`}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading={index === 0 ? "eager" : "lazy"}
+                />
+              </CarouselItem>
+            ))}
+          </Carousel>
+        ) : (
+          <img
+            src={project.image}
+            alt={displayTitle}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        )}
         
         {/* Badges Overlay */}
         <div className="absolute right-2 top-2 z-10 flex flex-col gap-1.5">

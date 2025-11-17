@@ -108,7 +108,9 @@ logs
 # Build outputs
 dist/
 build/
-public/
+# Note: frontend/public/ should be tracked for static assets
+# Only ignore root-level public/ if it exists
+# public/
 
 # Cache
 .cache/

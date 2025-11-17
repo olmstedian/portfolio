@@ -10,6 +10,11 @@ export const FALLBACK_PROJECTS: Project[] = [
     title: 'Spexop-UI',
     description: 'Complete React component ecosystem with 60+ components, type-safe design tokens, and WCAG AA+ accessibility. MIT licensed with provider-free architecture and modern development practices.',
     image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=250&fit=crop',
+    images: [
+      'https://olmstedian.github.io/portfolio/images/projects/spexop-builder.png', // Spexop Builder interface
+      'https://olmstedian.github.io/portfolio/images/projects/spexop-docs.png',    // Documentation
+      'https://olmstedian.github.io/portfolio/images/projects/spexop-homepage.png', // Homepage
+    ],
     technologies: ['React', 'TypeScript', 'Design System', 'Accessibility', 'CLI Tools'],
     github: 'https://github.com/spexop-ui',
     demo: 'https://spexop.com',
